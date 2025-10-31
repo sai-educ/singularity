@@ -60,6 +60,7 @@ export default class Renderer {
 
         this.instance.toneMapping = THREE.ACESFilmicToneMapping
         //this.instance.toneMapping = THREE.AgXToneMapping
+        this.instance.toneMappingExposure = 1.2
     }
 
     setDebug() {
