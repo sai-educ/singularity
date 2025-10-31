@@ -97,7 +97,7 @@ export default class BlackHole extends Model {
 
     setModel() {
         // add shpere
-        const geometry = new THREE.SphereGeometry( 1, 64, 64 )
+        const geometry = new THREE.SphereGeometry( 1, 16, 16 )
 
         const material = new THREE.MeshStandardNodeMaterial({
             side: THREE.DoubleSide
