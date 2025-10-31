@@ -58,7 +58,7 @@ export default class Renderer {
         this.instance.setClearColor( this.clearColor, 1 )
         this.instance.setSize( this.sizes.width, this.sizes.height )
 
-        //this.instance.toneMapping = THREE.ACESFilmicToneMapping
+        this.instance.toneMapping = THREE.ACESFilmicToneMapping
         //this.instance.toneMapping = THREE.AgXToneMapping
     }
 

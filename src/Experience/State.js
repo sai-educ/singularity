@@ -23,6 +23,8 @@ export default class State {
                 fogColor: uniform( color( 0x000000 ) ),
                 fogNear: uniform( 0 ),
                 fogFar: uniform( 47.83 ),
+
+                backgroundIntensity: 2
             },
 
             bloomPass: {

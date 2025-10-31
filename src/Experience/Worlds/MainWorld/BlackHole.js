@@ -226,7 +226,7 @@ export default class BlackHole extends Model {
             // ==== Environment blend on remaining transparency ====
             const dirForEnv = rayDir.mul(vec3(1, -1, 1)).xzy;
             const env = linearToSrgb(
-                texture(this.resources.items.starsTexture, equirectUV(dirForEnv))
+                texture(this.resources.items.starsTexture, equirectUV(dirForEnv)).mul( this.state.uniforms.mainScene.environment.backgroundIntensity )
             );
 
             const trans = float(1.0).sub(alphaAcc);

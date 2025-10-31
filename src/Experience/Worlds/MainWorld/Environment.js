@@ -1,7 +1,7 @@
 import * as THREE from 'three/webgpu'
 import Experience from '@experience/Experience.js'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { normalWorld, uniform } from "three/tsl";
+import { normalWorld, uniform, texture, uv, equirectUV } from "three/tsl";
 
 export default class Environment {
     constructor( parameters = {} ) {
@@ -86,7 +86,7 @@ export default class Environment {
         this.resources.items.starsTexture.mapping = THREE.EquirectangularReflectionMapping
         this.resources.items.starsTexture.colorSpace = THREE.SRGBColorSpace
         this.resources.items.starsTexture.needsUpdate = true
-        this.scene.background = this.resources.items.starsTexture
+        this.scene.backgroundNode = texture(this.resources.items.starsTexture, equirectUV()).mul( this.state.uniforms.mainScene.environment.backgroundIntensity )
 
     }
 
