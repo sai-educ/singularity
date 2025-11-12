@@ -8,6 +8,8 @@ import Renderer from './Renderer.js'
 import Worlds from './Worlds.js'
 import Resources from './Utils/Resources.js'
 import Sound from "./Utils/Sound.js";
+import PerformanceManager from './Utils/PerformanceManager.js'
+import FPSCounter from './Utils/FPSCounter.js'
 
 import sources from './Sources.js'
 import gsap from "gsap";
@@ -72,6 +74,8 @@ export default class Experience extends EventEmitter {
         this.sizes = new Sizes()
         this.time = new Time()
         this.ui = new Ui()
+        this.performance = new PerformanceManager()
+        this.fpsCounter = new FPSCounter(this.performance)
         this.renderer = new Renderer()
         this.state = new State()
         this.sound = new Sound()
@@ -88,16 +92,12 @@ export default class Experience extends EventEmitter {
 
         // Wait for resources
         this.resources.on( 'ready', () => {
-            setTimeout( () => {
-                window.preloader.hidePreloader()
-                // window.preloader.showPlayButton(() => {
-                //     // start media playing
-                // })
-            }, 1000)
-
+            console.log('[Experience] Resources ready, initializing...')
+            // Preloader disabled - start immediately
             this.time.reset()
 
             this.worlds = new Worlds()
+            console.log('[Experience] Worlds created')
 
             //this.sound.createSounds();
 
@@ -117,10 +117,12 @@ export default class Experience extends EventEmitter {
     }
 
     postInit() {
+        console.log('[Experience] postInit started')
         this.renderer.postInit()
         this.postProcess?.postInit()
         this.worlds?.postInit()
         this.debug?.postInit()
+        console.log('[Experience] postInit complete')
     }
 
     resize() {
@@ -142,9 +144,11 @@ export default class Experience extends EventEmitter {
     }
 
     async update() {
-        this.worlds.update( this.time.delta )
+        this.performance.update( this.time.delta )
+        this.fpsCounter.update()
+        this.worlds?.update( this.time.delta )
 
-        this.render()
+        await this.render()
 
         if ( this.debug.active ) {
             this.debug.update( this.time.delta )

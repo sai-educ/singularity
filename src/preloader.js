@@ -431,4 +431,5 @@ class Preloader {
     }
 }
 
-new Preloader()
+// Preloader disabled
+// new Preloader()

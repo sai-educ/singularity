@@ -39,6 +39,9 @@ export default class Camera
     {
         this.controls = new OrbitControls(this.instance, this.canvas)
         this.controls.enableDamping = true
+        this.controls.dampingFactor = 0.05  // Smoother damping
+        this.controls.rotateSpeed = 0.5     // Slower, more controlled rotation
+        this.controls.zoomSpeed = 0.8       // Smoother zoom
         this.controls.minDistance = 0;
         this.controls.maxDistance = 1000;
         this.controls.enabled = true;

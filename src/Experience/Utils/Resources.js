@@ -79,6 +79,8 @@ export default class Resources extends EventEmitter {
         ktx2Loader.setTranscoderPath( '/basis/' );
         ktx2Loader.detectSupportAsync(this.renderer);
 
+        this.loaders.ktx2Loader = ktx2Loader;
+
         this.loaders.gltfLoader.setDRACOLoader( dracoLoader )
         this.loaders.gltfLoader.setKTX2Loader( ktx2Loader );
         this.loaders.gltfLoader.setMeshoptDecoder( MeshoptDecoder );
@@ -220,6 +222,23 @@ export default class Resources extends EventEmitter {
                         source.path,
                         ( file ) => {
                             this.sourceLoaded( source, file )
+                        }
+                    )
+                    break
+
+                case 'ktx2':
+                    this.loaders.ktx2Loader.load(
+                        source.path,
+                        ( file ) => {
+                            // Apply mapping from meta if specified
+                            if (source.meta && source.meta.mapping === 'CubeUVReflection') {
+                                file.mapping = THREE.CubeUVReflectionMapping;
+                            }
+                            this.sourceLoaded( source, file )
+                        },
+                        undefined,
+                        ( error ) => {
+                            console.error( 'Error loading KTX2 texture:', error )
                         }
                     )
                     break

@@ -25,6 +25,7 @@ export default class BlackHole extends Model {
     experience = Experience.getInstance()
     debug = this.experience.debug
     state = this.experience.state
+    performance = this.experience.performance
     input = experience.input
     time = experience.time
     renderer = experience.renderer.instance
@@ -43,6 +44,11 @@ export default class BlackHole extends Model {
         originRadius: uniform( float( 0.13 ) ),
         width: uniform( float( 0.03 ) ),
         uvMotion: uniform( float(0) ),
+
+        // LOD parameters
+        enableLOD: uniform( float( 1.0 ) ), // 1.0 = enabled, 0.0 = disabled
+        lodMinDistance: uniform( float( 2.0 ) ),
+        lodMaxDistance: uniform( float( 10.0 ) ),
 
         rampCol1: uniform( color( 0.95, 0.71, 0.44 ) ),
         rampPos1: uniform( float( 0.050 ) ),
@@ -69,9 +75,25 @@ export default class BlackHole extends Model {
         this.transformControls = this.world.camera.transformControls
 
         this.init()
-        this._setDebug()
+        this._setupPerformanceListeners()
 
         //this.testArrays()
+    }
+
+    _setupPerformanceListeners() {
+        // Listen for quality changes from performance manager
+        this.performance.on('qualitychange', (data) => {
+            const settings = data.settings
+
+            // Update shader uniforms based on quality settings
+            this.uniforms.iterations.value = settings.iterations
+            this.uniforms.stepSize.value = settings.stepSize
+
+            console.log(`[BlackHole] Quality adjusted to ${data.level}:`, {
+                iterations: settings.iterations,
+                stepSize: settings.stepSize
+            })
+        })
     }
 
     testArrays() {
@@ -114,7 +136,19 @@ export default class BlackHole extends Model {
             const power = this.uniforms.power;
             const originRadius = this.uniforms.originRadius;
             const bandWidth = this.uniforms.width;
-            const iterCount = this.uniforms.iterations;
+
+            // ==== LOD: Adaptive iteration count based on camera distance ====
+            const camDist = length(sub(cameraPosition, positionWorld));
+            const lodFactor = remapClamp(
+                camDist,
+                this.uniforms.lodMinDistance,
+                this.uniforms.lodMaxDistance,
+                1.0,
+                0.4
+            );
+            // Mix between LOD-adjusted and full iterations based on enableLOD uniform
+            const lodIterations = this.uniforms.iterations.mul(lodFactor);
+            const iterCount = mix(this.uniforms.iterations, lodIterations, this.uniforms.enableLOD);
 
             // ==== Geometry- and view-dependent bases ====
             const objCoords = positionGeometry.mul(vec3(1, 1, -1)).xzy; // flip Z then swizzle
@@ -264,7 +298,9 @@ export default class BlackHole extends Model {
 
     }
 
-    _setDebug() {
+    _setDebug_DISABLED() {
+        // Debug completely disabled for production
+        return
         if ( !this.debug.active ) return
 
 
@@ -316,6 +352,27 @@ export default class BlackHole extends Model {
 
         exampleFolder.addBinding( this.uniforms.uvMotion, 'value', {
             label: 'UV Motion',
+        } )
+
+        exampleFolder.addBinding( this.uniforms.enableLOD, 'value', {
+            label: 'Enable LOD',
+            min: 0,
+            max: 1,
+            step: 1
+        } )
+
+        exampleFolder.addBinding( this.uniforms.lodMinDistance, 'value', {
+            label: 'LOD Min Distance',
+            min: 0.5,
+            max: 10,
+            step: 0.1
+        } )
+
+        exampleFolder.addBinding( this.uniforms.lodMaxDistance, 'value', {
+            label: 'LOD Max Distance',
+            min: 1,
+            max: 20,
+            step: 0.1
         } )
 
         exampleFolder.addBinding( this.uniforms.rampCol1, 'value', {

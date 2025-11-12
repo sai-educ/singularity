@@ -13,15 +13,34 @@ export default class Renderer {
         this.resources = this.experience.resources
         this.html = this.experience.html
 
+        // Frame pacing for ultra-smooth rendering
+        this.targetFrameTime = 1000 / 60
+        this.lastRenderTime = 0
+        this.frameAccumulator = 0
 
         this.setInstance()
         this.setDebug()
+    }
+
+    _setupPerformanceListeners() {
+        // Listen for quality changes to adjust pixel ratio
+        if (this.experience.performance) {
+            this.experience.performance.on('qualitychange', (data) => {
+                const settings = data.settings
+
+                // Update pixel ratio based on quality settings
+                this.instance.setPixelRatio(settings.pixelRatio)
+
+                console.log(`[Renderer] Pixel ratio adjusted to ${settings.pixelRatio.toFixed(2)} for ${data.level} quality`)
+            })
+        }
     }
 
     postInit() {
         this.camera = this.experience.mainCamera.instance
         this.scene = this.experience.mainScene
         this.state = this.experience.state
+        this._setupPerformanceListeners()
     }
 
     setInstance() {

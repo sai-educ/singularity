@@ -2,7 +2,6 @@ import * as THREE from 'three/webgpu'
 import * as Helpers from '@experience/Utils/Helpers.js'
 import Experience from '../Experience.js'
 
-import normalizeWheel from 'normalize-wheel'
 import Sizes from "./Sizes.js";
 import { MathUtils } from "three";
 

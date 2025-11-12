@@ -1,7 +1,5 @@
 import * as THREE from 'three/webgpu'
 import * as Helpers from '@experience/Utils/Helpers.js'
-import Stats from 'stats.js'
-import { Pane } from 'tweakpane';
 import Experience from "@experience/Experience.js";
 import Sizes from "./Sizes.js";
 
@@ -24,22 +22,8 @@ export default class Debug {
     sizes = this.experience.sizes
 
     constructor() {
-        //this.active = window.location.hash === '#debug'
-        this.active = true
-
-
-        if ( this.active ) {
-            this.panel = new Pane({
-                title: 'Debug',
-                container: document.getElementById('debug-panel'),
-                expanded: false
-            });
-
-            this.stats = new Stats()
-            this.stats.showPanel( 0 );
-
-            document.body.appendChild( this.stats.dom )
-        }
+        // Debug completely disabled for production
+        this.active = false
     }
 
     postInit() {

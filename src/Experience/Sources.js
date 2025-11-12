@@ -100,6 +100,19 @@ export default [
             "type": "exrTexture"
         }
     },
+    // FastHDR environment map (KTX2 format for 10x faster loading and 95% less GPU memory)
+    // To use FastHDR, download a .pmrem.ktx2 file from https://cdn.needle.tools/static/hdris/
+    // and place it in ./textures/hdr/ folder, then uncomment this:
+    // {
+    //     name: 'environmentHDR',
+    //     type: 'ktx2',
+    //     obfuscate: true,
+    //     path: './textures/hdr/nebula.pmrem.ktx2',
+    //     meta: {
+    //         "type": "ktx2",
+    //         "mapping": "CubeUVReflection"
+    //     }
+    // },
     {
         name: 'noiseDeepTexture',
         type: 'texture',

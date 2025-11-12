@@ -25,6 +25,7 @@ export default class PostProcess {
     debug = this.experience.debug
     sizes = this.experience.sizes
     state = this.experience.state
+    performance = this.experience.performance
     materials = Materials.getInstance()
 
     rendererClass = this.experience.renderer
@@ -54,6 +55,22 @@ export default class PostProcess {
 
         this.setComposer()
         this.setDebug()
+        this._setupPerformanceListeners()
+    }
+
+    _setupPerformanceListeners() {
+        // Listen for quality changes to enable/disable bloom
+        this.performance.on('qualitychange', (data) => {
+            const settings = data.settings
+
+            // Disable bloom on low quality for better performance
+            if (!settings.bloomEnabled && this.bloomPassMain) {
+                this.bloomPassMain.strength.value = 0
+            } else if (settings.bloomEnabled && this.bloomPassMain) {
+                // Restore bloom strength
+                this.bloomPassMain.strength.value = this.state.uniforms.mainScene.bloomPass.strength.value
+            }
+        })
     }
 
     setComposer() {
